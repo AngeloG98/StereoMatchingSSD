@@ -14,24 +14,16 @@ void orb_feature_match(Mat img_1, Mat img_2, vector<KeyPoint> &keypoints_1, vect
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
 
     // Oriented FAST
-    chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
     detector->detect(img_1, keypoints_1);
     detector->detect(img_2, keypoints_2);
 
     // BRIEF
     descriptor->compute(img_1, keypoints_1, descriptors_1);
     descriptor->compute(img_2, keypoints_2, descriptors_2);
-    chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
-    chrono::duration<double> time_used = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-    cout << "extract ORB cost = " << time_used.count() << " seconds. " << endl;
 
     // match
     vector<DMatch> matches_raw;
-    t1 = chrono::steady_clock::now();
     matcher->match(descriptors_1, descriptors_2, matches_raw);
-    t2 = chrono::steady_clock::now();
-    time_used = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-    cout << "match ORB cost = " << time_used.count() << " seconds. " << endl;
 
     //max min Hamming
     auto min_max = minmax_element(matches_raw.begin(), matches_raw.end(),
